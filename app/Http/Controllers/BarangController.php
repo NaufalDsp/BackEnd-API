@@ -3,154 +3,127 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
-use Exception;
+use App\Models\Tag;
 
 class BarangController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $barang = Barang::orderBy('name', 'asc')->get();
-
-        return view('barang.barang', [
-            'barang' => $barang
-        ]);
+        $barang = Barang::with('tags')->orderBy('name', 'asc')->get();
+        return view('barang.barang', compact('barang'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return view('barang.barang-add');
+        $kategoris = Kategori::orderBy('nama', 'asc')->get(); // Ambil semua kategori
+        $tags = Tag::orderBy('name', 'asc')->get();
+        return view('barang.barang-add', compact('kategoris','tags'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|max:100|unique:barangs',
-            'category' => 'required',
+            'id_kategori' => 'required|exists:kategoris,id_kategori', // Validasi menggunakan id_kategori
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
-            'stock' => 'required',
-            'price' => 'required',
-            'note' => 'max:1000',
+            'stock' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:0',
+            'note' => 'nullable|max:1000',
+            'tags' => 'nullable|array', // Validasi input tags
+            'tags.*' => 'exists:tags,id_tag', // Validasi setiap tag
         ]);
+    
         $input = $request->all();
-
+    
         if ($image = $request->file('image')) {
             $destinationPath = 'images/';
             $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
             $input['image'] = "$profileImage";
         }
-
-
-        Barang::create($input);
-
-        Alert::success('Success', 'Barang has been saved !');
+    
+        // Simpan barang ke database
+        $barang = Barang::create($input);
+    
+        // Sinkronisasi tags
+        if (!empty($request->tags)) {
+            $barang->tags()->sync($request->tags);
+        }
+    
+        Alert::success('Success', 'Barang has been saved!');
         return redirect('/barang');
     }
+    
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Barang $barang)
-    {
-        // Mencari barang berdasarkan ID
-        $barang = Barang::find($barang->id_barang);
-
-        // Menampilkan view dan mengirim data barang
-        return view('barang.barang-show', compact('barang'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id_barang)
     {
-        $barang = barang::findOrFail($id_barang);
-
-        return view('barang.barang-edit', [
-            'barang' => $barang,
-        ]);
+        $barang = Barang::findOrFail($id_barang);
+        $kategoris = Kategori::orderBy('nama', 'asc')->get();
+        $tags = Tag::orderBy('name', 'asc')->get();
+        return view('barang.barang-edit', compact('barang', 'kategoris','tags'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id_barang)
     {
         $barang = Barang::findOrFail($id_barang);
-
-        // Validasi data, buat gambar opsional (nullable)
+    
         $validated = $request->validate([
             'name' => 'required|max:100|unique:barangs,name,' . $id_barang . ',id_barang',
-            'category' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',  // Nullable, agar gambar opsional
-            'stock' => 'required',
-            'price' => 'required',
-            'note' => 'max:1000',
+            'id_kategori' => 'required|exists:kategoris,id_kategori',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            'stock' => 'required|integer|min:1',
+            'price' => 'required|numeric|min:0',
+            'note' => 'nullable|max:1000',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:tags,id_tag',
         ]);
-
-        // Cek jika ada file gambar baru
+    
         if ($request->hasFile('image')) {
-            // Hapus gambar lama
             if ($barang->image) {
                 $oldImagePath = public_path('images/' . $barang->image);
                 if (file_exists($oldImagePath)) {
                     unlink($oldImagePath);
                 }
             }
-
-            // Upload gambar baru
+    
             $image = $request->file('image');
             $imageName = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move(public_path('images'), $imageName);
             $validated['image'] = $imageName;
         } else {
-            // Tetap gunakan gambar lama jika tidak ada gambar baru
             $validated['image'] = $barang->image;
         }
-
-        // Update data barang
+    
         $barang->update($validated);
-
-        // Tampilkan pesan sukses
+    
+        // Sinkronisasi tags
+        if (!empty($request->tags)) {
+            $barang->tags()->sync($request->tags);
+        } else {
+            $barang->tags()->detach(); // Hapus semua tags jika tidak ada input
+        }
+    
         Alert::info('Success', 'Barang has been updated!');
         return redirect('/barang');
     }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy($id_barang)
     {
-        try {
-            $deletedbarang = Barang::findOrFail($id_barang);
-    
-            // Hapus file gambar jika ada
-            if ($deletedbarang->image) {
-                $imagePath = public_path('images/' . $deletedbarang->image);
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
+        $barang = Barang::findOrFail($id_barang);
+
+        if ($barang->image) {
+            $imagePath = public_path('images/' . $barang->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
             }
-    
-            $deletedbarang->delete();
-    
-            Alert::error('Success', 'Barang has been deleted !');
-            return redirect('/barang');
-        } catch (Exception $ex) {
-            Alert::warning('Error', 'Cant deleted, Barang already used !');
-            return redirect('/barang');
         }
+
+        $barang->delete();
+
+        Alert::success('Deleted', 'Barang has been deleted!');
+        return redirect('/barang');
     }
 }
