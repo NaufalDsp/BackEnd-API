@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BarangController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\TagController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +30,5 @@ Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
 
 //route barang
 Route::resource('/barang', BarangController::class)->middleware('auth');
+Route::resource('/kategori', KategoriController::class)->middleware('auth');
+Route::resource('/tag', TagController::class)->middleware('auth');

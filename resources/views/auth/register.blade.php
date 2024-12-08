@@ -59,9 +59,8 @@
                         @enderror
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" name="password" id="password"
-                            class="form-control @error('password') is-invalid @enderror" placeholder="Password"
-                            required>
+                        <input type="password" name="password"
+                            class="form-control @error('password') is-invalid @enderror" placeholder="Password" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
@@ -72,18 +71,19 @@
                         @enderror
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" name="passwordConfirm" id="passwordConfirm"
-                            class="form-control @error('passwordConfirm') is-invalid @enderror"
-                            placeholder="Retype password" required>
+                        <input type="password" name="password_confirmation"
+                            class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Retype password"
+                            required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
                             </div>
                         </div>
-                        @error('passwordConfirm')
+                        @error('password_confirmation')
                             <span class="invalid-feedback text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    
                     <div class="row">
                         <div class="col-7">
                             <button type="submit" class="bg-orange-500 text-white font-bold py-1 w-80 rounded">Daftar</button>

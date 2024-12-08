@@ -1,5 +1,5 @@
 @extends('template.main')
-@section('title', 'Barang')
+@section('title', 'Tag')
 @section('content')
 
     <div class="content-wrapper">
@@ -30,9 +30,9 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="text-right">
-                                    <a href="/barang/create" class="bg-blue-500 text-white font-bold px-2 py-1 rounded"><i
+                                    <a href="/tag/create" class="bg-blue-500 text-white font-bold px-2 py-1 rounded"><i
                                             class="fa-solid fa-plus"></i> Add
-                                        Barang</a>
+                                        Tag</a>
                                 </div>
                             </div>
                             <!-- /.card-header -->
@@ -42,47 +42,24 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Gambar</th>
-                                            <th>Nama</th>
-                                            <th>Category</th>
-                                            <th>Stock</th>
-                                            <th>Price</th>
-                                            <th>Tags</th>
-                                            <th>Note</th>
+                                            <th>Nama Tag</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($barang as $data)
+                                        @foreach ($tags as $tag)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td><img src="/images/{{ $data->image }}" width="100px"></td>
-                                                <td>{{ $data->name }}</td>
-                                                <td>{{ $data->kategori->nama }}</td>
-                                                <td>{{ $data->stock }}</td>
-                                                <td>Rp. {{ number_format($data->price, 0) }}</td>
+                                                <td>{{ $tag->name }}</td>
                                                 <td>
-                                                    @foreach ($data->tags as $tag)
-                                                        <span class="badge badge-info">{{ $tag->name }}</span>
-                                                    @endforeach
-                                                </td>                                                
-                                                <td>{{ $data->note }}</td>
-                                                <td>
-                                                    <form class="d-inline" action="/barang/{{ $data->id_barang }}/edit"
+                                                    <form class="d-inline" action="/tag/{{ $tag->id_tag }}/edit"
                                                         method="GET">
                                                         <button type="submit"
                                                             class="btn btn-success btn-sm text-xs px-2 py-1">
                                                             <i class="fa-solid fa-pen"></i> Edit
                                                         </button>
                                                     </form>
-                                                    <form class="d-inline" action="/barang/{{ $data->id_barang }}"
-                                                        method="GET">
-                                                        <button type="submit"
-                                                            class="btn btn-info btn-sm text-xs px-2 py-1">
-                                                            <i class="fa fa-eye"></i> Show
-                                                        </button>
-                                                    </form>
-                                                    <form class="d-inline" action="/barang/{{ $data->id_barang }}"
+                                                    <form class="d-inline" action="/tag/{{ $tag->id_tag }}"
                                                         method="POST">
                                                         @csrf
                                                         @method('delete')

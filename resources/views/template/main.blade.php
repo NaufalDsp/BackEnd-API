@@ -77,6 +77,22 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="/kategori" class="nav-link">
+                                <i class="nav-icon fa-solid fa-box"></i>
+                                <p>
+                                    Kategori
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/tag" class="nav-link">
+                                <i class="nav-icon fa-solid fa-box"></i>
+                                <p>
+                                    Tag
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="log-out ml-3 bg-white" href="#" class="nav-link">
                                 <i class="nav-icon fa-solid fa-power-off pt-2" style="color: red;"></i>
                                 Logout
