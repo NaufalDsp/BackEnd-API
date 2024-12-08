@@ -126,4 +126,5 @@ class BarangController extends Controller
         Alert::success('Deleted', 'Barang has been deleted!');
         return redirect('/barang');
     }
+
 }
