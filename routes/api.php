@@ -2,18 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProdukAPIController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+Route::get('/barang', [ProdukAPIController::class, 'apiIndex']);
+Route::get('/barang/{id}', [ProdukAPIController::class, 'apiShow']);
+Route::post('/barang', [ProdukAPIController::class, 'apiStore']);
+Route::put('/barang/{id}', [ProdukAPIController::class, 'apiUpdate']);
+Route::delete('/barang/{id}', [ProdukAPIController::class, 'apiDestroy']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
