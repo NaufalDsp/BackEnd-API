@@ -15,7 +15,6 @@ class AuthTest extends TestCase
     {
         parent::setUp();
         
-        // Buat user untuk testing
         User::create([
             'name' => 'Test User',
             'email' => 'a@gmail.com',

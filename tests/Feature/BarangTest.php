@@ -25,24 +25,41 @@ class BarangTest extends TestCase
         $this->actingAs($this->user);
     }
 
-    public function test_user_can_create_barang()
+    public function test_create_barang()
     {
         Storage::fake('public');
+
+        $imageFile = UploadedFile::fake()->image('bread.jpg');
 
         $response = $this->post('/barang', [
             'name' => 'Roti Tawar',
             'category' => 'Bread',
-            'image' => UploadedFile::fake()->image('bread.jpg'),
+            'image' => $imageFile,
+            'stock' => 100,
+            'price' => 15000,
+            'note' => 'Fresh bread',
+        ]);
+
+        $response->assertRedirect('/barang');
+
+        // Cek seluruh data yang dimasukkan
+        $this->assertDatabaseHas('barangs', [
+            'name' => 'Roti Tawar',
+            'category' => 'Bread',
             'stock' => 100,
             'price' => 15000,
             'note' => 'Fresh bread'
         ]);
 
-        $response->assertRedirect('/barang');
-        $this->assertDatabaseHas('barangs', ['name' => 'Roti Tawar']);
+        // Periksa apakah file gambar tersimpan
+        $barang = Barang::where('name', 'Roti Tawar')->first();
+        $this->assertNotNull($barang->image);
+
+        // Pastikan file gambar ada di storage
+        Storage::disk('public')->Exists($barang->image);
     }
 
-    public function test_user_can_view_barang()
+    public function test_view()
     {
         $barang = Barang::factory()->create();
 
@@ -52,7 +69,7 @@ class BarangTest extends TestCase
         $response->assertSee($barang->name);
     }
 
-    public function test_user_can_update_barang()
+    public function test_update()
     {
         $barang = Barang::factory()->create();
 
@@ -68,7 +85,7 @@ class BarangTest extends TestCase
         $this->assertDatabaseHas('barangs', ['name' => 'Updated Bread']);
     }
 
-    public function test_user_can_delete_barang()
+    public function test_delete()
     {
         $barang = Barang::factory()->create();
 
@@ -78,7 +95,7 @@ class BarangTest extends TestCase
         $this->assertDatabaseMissing('barangs', ['id_barang' => $barang->id_barang]);
     }
 
-    public function test_user_cannot_create_barang_with_empty_name()
+    public function test_cannot_create_barang_with_empty_name()
     {
         $response = $this->post('/barang', [
             'name' => '',
@@ -91,7 +108,7 @@ class BarangTest extends TestCase
         $response->assertSessionHasErrors('name');
     }
 
-    public function test_user_cannot_update_nonexistent_barang()
+    public function test_cannot_update_nonexistent_barang()
     {
         $response = $this->put('/barang/999', [
             'name' => 'Updated Bread',
@@ -102,4 +119,5 @@ class BarangTest extends TestCase
 
         $response->assertStatus(404);
     }
+    
 }
