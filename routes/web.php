@@ -32,3 +32,8 @@ Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
 Route::resource('/barang', BarangController::class)->middleware('auth');
 Route::resource('/kategori', KategoriController::class)->middleware('auth');
 Route::resource('/tag', TagController::class)->middleware('auth');
+
+// Route Swagger
+Route::get('/swagger', function () {
+    return view('swagger.swagger'); // Akses file di dalam folder 'swagger'
+});

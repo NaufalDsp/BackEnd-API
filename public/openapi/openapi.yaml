@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  title: BackEnd API
+  contact: {}
+  version: '1.0'
+servers:
+  - url: http://127.0.0.1:8000/api
+    variables: {}
+paths:
+  /barang/4:
+    get:
+      tags:
+        - Barang
+      summary: Menampilkan Data
+      operationId: MenampilkanData
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /barang:
+    post:
+      tags:
+        - Barang
+      summary: Menambahkan Data
+      operationId: MenambahkanData
+      parameters:
+        - name: Accept
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: application/json
+      requestBody:
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              required:
+                - name
+                - id_kategori
+                - image
+                - stock
+                - price
+                - note
+                - tags[]
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: coba lagi
+                id_kategori:
+                  type: integer
+                  format: int32
+                  example: 1
+                image:
+                  type: string
+                  format: binary
+                stock:
+                  type: integer
+                  format: int32
+                  example: 10
+                price:
+                  type: integer
+                  format: int32
+                  example: 3000
+                note:
+                  type: string
+                  example: halo
+                tags[]:
+                  type: integer
+                  format: int32
+                  example: 1
+        required: false
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /barang/2:
+    put:
+      tags:
+        - Barang
+      summary: Mengupdate Data
+      operationId: MengupdateData
+      parameters:
+        - name: Content-Type
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            enum:
+              - multipart/form-data
+            type: string
+            example: multipart/form-data
+        - name: Accept
+          in: header
+          description: ''
+          required: true
+          style: simple
+          schema:
+            type: string
+            example: application/json
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            encoding: {}
+            schema:
+              required:
+                - name
+                - id_kategori
+                - stock
+                - price
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: update berhasil
+                id_kategori:
+                  type: integer
+                  format: int32
+                  example: 1
+                stock:
+                  type: integer
+                  format: int32
+                  example: 10
+                price:
+                  type: integer
+                  format: int32
+                  example: 10000
+        required: false
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /barang/1:
+    delete:
+      tags:
+        - Barang
+      summary: Menghapus Data
+      operationId: MenghapusData
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+tags:
+  - name: Barang
